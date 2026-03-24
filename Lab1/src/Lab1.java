@@ -31,6 +31,7 @@ public class Lab1 {
             System.out.println("4. 计算两个单词之间的最短路径");
             System.out.println("5. 计算 PageRank");
             System.out.println("6. 随机游走");
+            System.out.println("7. 保存并生成有向图 (PNG)");
             System.out.println("0. 退出");
             System.out.print("请选择功能: ");
             
@@ -60,7 +61,14 @@ public class Lab1 {
                     String startWord = scanner.nextLine();
                     System.out.print("输入终点单词: ");
                     String endWord = scanner.nextLine();
-                    System.out.println(calcShortestPath(startWord, endWord));
+                    String pathResult = calcShortestPath(startWord, endWord);
+                    System.out.println(pathResult);
+                    
+                    if (endWord != null && !endWord.trim().isEmpty() && !pathResult.contains("不可达") && !pathResult.contains("不在图")) {
+                        String pathOnly = pathResult.split(" \\(长度:")[0];
+                        List<String> pathList = Arrays.asList(pathOnly.split(" -> "));
+                        saveDirectedGraph(graph, pathList);
+                    }
                     break;
                 case "5":
                     System.out.print("输入要查询PR值的单词: ");
@@ -69,6 +77,9 @@ public class Lab1 {
                     break;
                 case "6":
                     System.out.println(randomWalk());
+                    break;
+                case "7":
+                    saveDirectedGraph(graph, null);
                     break;
                 default:
                     System.out.println("无效选择。");
@@ -329,6 +340,85 @@ public class Lab1 {
         }
         
         return output;
+    }
+
+    public static void saveDirectedGraph(Graph G, List<String> highlightPath) {
+        StringBuilder dot = new StringBuilder();
+        dot.append("digraph G {\n");
+        dot.append("    node [shape=circle, style=filled, fillcolor=\"#E3F2FD\", fontname=\"Arial\"];\n");
+        dot.append("    edge [fontname=\"Arial\", fontsize=10];\n");
+        
+        Set<String> nodes = G.getNodes();
+        if (nodes == null || nodes.isEmpty()) {
+            System.out.println("图为空，无法生成图像！");
+            return;
+        }
+
+        Set<String> pathNodes = new HashSet<>();
+        Set<String> pathEdges = new HashSet<>();
+        if (highlightPath != null && highlightPath.size() > 0) {
+            pathNodes.addAll(highlightPath);
+            for (int i = 0; i < highlightPath.size() - 1; i++) {
+                pathEdges.add(highlightPath.get(i) + "->" + highlightPath.get(i + 1));
+            }
+        }
+
+        for (String u : nodes) {
+            String nodeStyle = pathNodes.contains(u) ? " [fillcolor=\"#ff9999\", color=\"red\", penwidth=2]" : "";
+            dot.append(String.format("    \"%s\"%s;\n", u, nodeStyle));
+            
+            Map<String, Integer> edges = G.getEdges(u);
+            if (edges != null) {
+                for (Map.Entry<String, Integer> e : edges.entrySet()) {
+                    String v = e.getKey();
+                    int weight = e.getValue();
+                    String edgeKey = u + "->" + v;
+                    String edgeStyle = pathEdges.contains(edgeKey) ? " [color=\"red\", penwidth=2, label=\"" + weight + "\", fontcolor=\"red\"]" : " [label=\"" + weight + "\"]";
+                    dot.append(String.format("    \"%s\" -> \"%s\"%s;\n", u, v, edgeStyle));
+                }
+            }
+        }
+        dot.append("}\n");
+
+        File outDir = new File("output");
+        if (!outDir.exists()) outDir.mkdirs();
+        
+        String baseName = (highlightPath != null) ? "shortest_path" : "graph";
+        File dotFile = new File("output/" + baseName + ".dot");
+        try (FileWriter fw = new FileWriter(dotFile)) {
+            fw.write(dot.toString());
+        } catch (IOException e) {
+            System.out.println("写入 dot 文件失败: " + e.getMessage());
+            return;
+        }
+
+        System.out.println("已保存 dot 代码。正在通过 Web API 生成 " + baseName + ".png ...");
+        try {
+            String encodedDot = java.net.URLEncoder.encode(dot.toString(), "UTF-8");
+            String urlStr = "https://quickchart.io/graphviz?graph=" + encodedDot;
+            java.net.URL url = new java.net.URI(urlStr).toURL();
+            java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(10000);
+            
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                try (InputStream in = conn.getInputStream();
+                     FileOutputStream out = new FileOutputStream("output/" + baseName + ".png")) {
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = in.read(buffer)) != -1) {
+                        out.write(buffer, 0, bytesRead);
+                    }
+                }
+                System.out.println("成功！图片已保存至: output/" + baseName + ".png");
+            } else {
+                System.out.println("API请求失败，请确保网络连接正常！");
+            }
+        } catch (Exception e) {
+            System.out.println("生成图片失败: " + e.getMessage());
+        }
     }
 
     private static class Node {
