@@ -380,11 +380,12 @@ public class Lab1 {
         }
         dot.append("}\n");
 
-        File outDir = new File("output");
+        String outPath = new File("Lab1").exists() ? "Lab1/output/" : "output/";
+        File outDir = new File(outPath);
         if (!outDir.exists()) outDir.mkdirs();
         
         String baseName = (highlightPath != null) ? "shortest_path" : "graph";
-        File dotFile = new File("output/" + baseName + ".dot");
+        File dotFile = new File(outPath + baseName + ".dot");
         try (FileWriter fw = new FileWriter(dotFile)) {
             fw.write(dot.toString());
         } catch (IOException e) {
@@ -395,7 +396,7 @@ public class Lab1 {
         System.out.println("已保存 dot 代码。正在通过 Web API 生成 " + baseName + ".png ...");
         try {
             String encodedDot = java.net.URLEncoder.encode(dot.toString(), "UTF-8");
-            String urlStr = "https://quickchart.io/graphviz?graph=" + encodedDot;
+            String urlStr = "https://quickchart.io/graphviz?format=png&graph=" + encodedDot;
             java.net.URL url = new java.net.URI(urlStr).toURL();
             java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -405,14 +406,14 @@ public class Lab1 {
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
                 try (InputStream in = conn.getInputStream();
-                     FileOutputStream out = new FileOutputStream("output/" + baseName + ".png")) {
+                     FileOutputStream out = new FileOutputStream(outPath + baseName + ".png")) {
                     byte[] buffer = new byte[4096];
                     int bytesRead;
                     while ((bytesRead = in.read(buffer)) != -1) {
                         out.write(buffer, 0, bytesRead);
                     }
                 }
-                System.out.println("成功！图片已保存至: output/" + baseName + ".png");
+                System.out.println("成功！图片已保存至: " + outPath + baseName + ".png");
             } else {
                 System.out.println("API请求失败，请确保网络连接正常！");
             }
