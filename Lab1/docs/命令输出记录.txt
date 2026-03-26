@@ -53,3 +53,34 @@ Binary files a/README.md and b/README.md differ
 >>> R4: 重新提交
 ----------------------------------------
 $ git add .
+git : warning: in the w
+orking copy of 'Lab1/do
+cs/鎶ュ憡鎴浘鎸囧崡.md', LF wi
+ll be replaced by CRLF 
+the next time Git touch
+es it
+所在位置 行:1 字符: 1
++ git add . 2>&1 | Out-
+File $out -Append -Enco
+ding utf8
++ ~~~~~~~~~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (warning: in t   
+ he... Git touches     
+it:String) [], Rem    o
+teException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+$ git commit -m 'Scene 1: First modification (R4)'
+[2023111320 3dec8d6] Scene 1: First modification (R4)
+ 4 files changed, 300 insertions(+)
+ create mode 100644 "Lab1/docs/~$23111320-\346\235\216\347\247\213\351\234\226-lab1.doc"
+ create mode 100644 "Lab1/docs/\345\221\275\344\273\244\350\276\223\345\207\272\350\256\260\345\275\225.txt"
+ create mode 100644 "Lab1/docs/\346\212\245\345\221\212\346\210\252\345\233\276\346\214\207\345\215\227.md"
+
+>>> R5: 再次修改并提交
+----------------------------------------
+$ git add .
