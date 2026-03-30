@@ -1,0 +1,140 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --gemini-bg: #131314;
+  --gemini-card: #1e1f22;
+  --gemini-text: #e3e3e3;
+  --gemini-text-secondary: #c4c7c5;
+  --gemini-border: rgba(255, 255, 255, 0.08);
+  --gemini-blur: rgba(19, 19, 20, 0.75);
+  --gemini-blue: #4285f4;
+  
+  /* The signature Gemini gradient */
+  --gemini-gradient: linear-gradient(90deg, #4285f4 0%, #9b72cb 33%, #d96570 66%, #fbbc04 100%);
+  --gemini-gradient-subtle: linear-gradient(135deg, rgba(66, 133, 244, 0.15), rgba(155, 114, 203, 0.15));
+}
+
+body {
+  font-family: 'Inter', 'Noto Sans SC', sans-serif;
+  background-color: var(--gemini-bg);
+  color: var(--gemini-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--gemini-text) !important;
+}
+
+/* Gemini Glowing Text */
+.gemini-text-glow {
+  background: var(--gemini-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #3c4043;
+  border-radius: 8px;
+}
+
+/* Base Card Style */
+.apple-card {
+  background: var(--gemini-card);
+  border-radius: 20px !important;
+  border: 1px solid var(--gemini-border) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.apple-card:hover {
+  transform: scale(1.01);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Dark Frosted Glass */
+.apple-glass {
+  background: var(--gemini-blur) !important;
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--gemini-border);
+}
+
+/* Inputs & Pills */
+.ant-input, .ant-input-number, .ant-input-password, .ant-input-affix-wrapper {
+  background: #282a2c !important;
+  border: 1px solid var(--gemini-border) !important;
+  border-radius: 12px !important;
+  color: var(--gemini-text) !important;
+  transition: all 0.3s ease;
+}
+.ant-input:focus, .ant-input-number-focused, .ant-input-affix-wrapper-focused {
+  background: #282a2c !important;
+  border-color: #9b72cb !important;
+  box-shadow: 0 0 0 3px rgba(155, 114, 203, 0.2) !important;
+}
+.ant-input::placeholder {
+  color: #757575 !important;
+}
+
+/* Gradient Buttons */
+.auth-btn {
+  background: var(--gemini-gradient) !important;
+  border: none !important;
+  color: white !important;
+  font-weight: 600 !important;
+  border-radius: 22px !important;
+  transition: transform 0.2s ease, opacity 0.2s ease !important;
+}
+.auth-btn:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+.ant-btn-primary {
+  background: #f8f9fa !important;
+  color: #131314 !important;
+  border-radius: 22px !important;
+  font-weight: 500 !important;
+  border: none !important;
+}
+.ant-btn-primary:hover {
+  background: #e8eaed !important;
+}
+
+/* Fade In */
+.fade-in {
+  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Ambient Glow Background for Chat/Login */
+.ambient-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  height: 80vw;
+  max-width: 800px;
+  max-height: 800px;
+  background: radial-gradient(circle, rgba(66, 133, 244, 0.1) 0%, rgba(155, 114, 203, 0.05) 40%, transparent 70%);
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(60px);
+}
