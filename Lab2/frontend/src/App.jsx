@@ -15,29 +15,29 @@ export default function App() {
   return (
     <ConfigProvider
       theme={{
-        algorithm: theme.darkAlgorithm, // 启用 Ant Design 官方暗黑模式算法
+        algorithm: theme.darkAlgorithm,
         token: {
-          colorPrimary: '#9b72cb', // 偏向Gemini的紫色
-          colorBgBase: '#131314', // Gemini 黑
-          colorBgContainer: '#1e1f22',
-          colorTextBase: '#e3e3e3',
-          fontFamily: "'Inter', 'Noto Sans SC', sans-serif",
-          borderRadius: 12,
+          colorPrimary: '#4285f4', // Aura Blue
+          colorBgBase: '#0c0c0d', // Deep Obsidian
+          colorBgContainer: '#161618', 
+          colorTextBase: '#f2f2f2',
+          fontFamily: "'Inter', 'Outfit', 'Noto Sans SC', sans-serif",
+          borderRadius: 16,
         },
         components: {
           Card: {
-            paddingLG: 32,
-            borderRadiusLG: 24,
+            paddingLG: 24,
+            borderRadiusLG: 28,
           },
           Button: {
             controlHeight: 44,
-            paddingInline: 24,
+            borderRadius: 100,
+            fontWeight: 600,
           },
           Input: {
             controlHeight: 44,
-          },
-          InputNumber: {
-            controlHeight: 44,
+            borderRadius: 12,
+            colorBgContainer: '#1c1c1f',
           }
         }
       }}

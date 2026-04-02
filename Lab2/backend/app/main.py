@@ -42,24 +42,37 @@ app.include_router(health.router)
 app.include_router(ai.router)
 
 # --- Static File Serving (for First Iteration Demo) ---
-# Locate the frontend/dist directory
-frontend_dist = pathlib.Path(__file__).parent.parent.parent / "frontend" / "dist"
+# Locate the frontend/dist directory explicitly matching the project structure
+_app_file = pathlib.Path(__file__).resolve()
+# backend/app/main.py -> backend/app -> backend -> Lab2 -> frontend/dist
+frontend_dist = _app_file.parent.parent.parent / "frontend" / "dist"
 
 if frontend_dist.exists():
     # Serve static assets (js, css, images) from /assets
-    app.mount("/assets", StaticFiles(directory=frontend_dist / "assets"), name="assets")
+    assets_dir = frontend_dist / "assets"
+    if assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
     # Serve index.html for all other routes (SPA support)
     @app.get("/{full_path:path}")
     async def serve_frontend(full_path: str):
-        # Prevent catching API routes (though routers should take precedence)
         if full_path.startswith("api/"):
             return {"error": "Not Found"}
-        return FileResponse(frontend_dist / "index.html")
+        index_file = frontend_dist / "index.html"
+        if index_file.exists():
+            return FileResponse(index_file)
+        return {"error": "Frontend build (index.html) not found"}
 
 @app.get("/")
 def root():
-    # If dist exists, serve frontend index, otherwise return API message
-    if (frontend_dist / "index.html").exists():
-        return FileResponse(frontend_dist / "index.html")
-    return {"message": "办公室健康监测系统 API (Frontend dist not found)", "docs": "/docs"}
+    index_path = frontend_dist / "index.html"
+    if index_path.exists():
+        return FileResponse(index_path)
+    return {
+        "message": "Aura API Online", 
+        "debug_info": {
+            "resolved_dist_path": str(frontend_dist.resolve()),
+            "index_exists": index_path.exists(),
+            "cwd": os.getcwd()
+        }
+    }

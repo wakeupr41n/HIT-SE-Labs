@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Input, Typography, Spin } from 'antd';
-import { ArrowUpOutlined } from '@ant-design/icons';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, Sparkles, User, Bot, ArrowUp } from 'lucide-react';
 import { sendChat, getChatHistory } from '../api';
 
 const { Title, Text } = Typography;
@@ -22,130 +23,169 @@ export default function AIChat() {
   }, [messages]);
 
   const handleSend = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || loading) return;
     const userMsg = input.trim();
     setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: userMsg, id: Date.now() }]);
+    const tempId = Date.now();
+    setMessages(prev => [...prev, { role: 'user', content: userMsg, id: tempId }]);
     setLoading(true);
 
     try {
       const res = await sendChat(userMsg);
-      setMessages(prev => [...prev, { role: 'assistant', content: res.data.reply, id: Date.now() + 1 }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: res.data.reply, id: tempId + 1 }]);
     } catch (err) {
-      const detail = err.response?.data?.detail || err.message || '网络连接中断';
-      setMessages(prev => [...prev, { role: 'assistant', content: `服务不可用 (${detail})`, id: Date.now() + 1 }]);
+      const detail = err.response?.data?.detail || '网络连接超时';
+      setMessages(prev => [...prev, { role: 'assistant', content: `[Aura Error] ${detail}`, id: tempId + 1 }]);
     }
     setLoading(false);
   };
 
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 140px)', maxWidth: 840, margin: '0 auto', position: 'relative' }}>
+    <div style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      height: 'calc(100vh - 160px)', 
+      maxWidth: 900, 
+      margin: '0 auto', 
+      position: 'relative' 
+    }}>
+      <div className="ambient-glow-v3" />
       
-      <div className="ambient-glow" style={{ opacity: 0.8 }}></div>
-
-      <div style={{ textAlign: 'center', marginBottom: 24, position: 'relative', zIndex: 1 }}>
-        <Title level={3} style={{ fontWeight: 600, margin: 0, letterSpacing: '-0.01em' }}>
-          <span className="gemini-text-glow">Aura Intelligence</span>
+      <header style={{ textAlign: 'center', marginBottom: 32 }}>
+        <Title level={2} className="outfit" style={{ fontWeight: 700, margin: 0 }}>
+          <span className="gemini-gradient-text">Aura Intelligence</span>
         </Title>
-        <Text style={{ color: '#c4c7c5', fontSize: 13 }}>由前沿多模态大模型驱动的专属健康伴侣</Text>
-      </div>
+        <Text style={{ color: 'var(--text-tertiary)', fontSize: 14 }}>基于您今日体征数据的多模态深度健康洞察</Text>
+      </header>
 
-      <div className="apple-card" style={{ 
+      <div className="bento-card" style={{ 
         flex: 1, 
         display: 'flex', 
         flexDirection: 'column',
-        position: 'relative',
-        zIndex: 1,
-        background: 'rgba(30, 31, 34, 0.6)', 
-        backdropFilter: 'blur(20px)'
+        padding: 0,
+        background: 'rgba(22, 22, 24, 0.4)',
+        backdropFilter: 'blur(32px)',
+        border: '1px solid var(--glass-border)'
       }}>
         
-        <div ref={listRef} style={{ flex: 1, overflowY: 'auto', padding: '32px 40px', scrollBehavior: 'smooth' }}>
-          {messages.length === 0 ? (
-            <div style={{ textAlign: 'center', marginTop: 100, color: '#c4c7c5' }}>
-              <div style={{ width: 64, height: 64, margin: '0 auto 24px', borderRadius: '50%', background: 'var(--gemini-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
-                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                </svg>
-              </div>
-              <p style={{ fontSize: 18, fontWeight: 500, color: '#e3e3e3', marginBottom: 8 }}>您好，我是 Aura。</p>
-              <p style={{ fontSize: 14, lineHeight: 1.6 }}>基于您最新的体征数据，<br/>我能为您提供个性化的深层健康洞察。</p>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-              {messages.map((msg) => {
-                const isUser = msg.role === 'user';
-                return (
-                  <div key={msg.id} style={{ display: 'flex', flexDirection: 'column', alignItems: isUser ? 'flex-end' : 'flex-start' }}>
-                    <div style={{
-                      padding: '12px 18px', 
-                      background: isUser ? '#2a2b2f' : 'transparent',
-                      color: '#e3e3e3',
-                      borderRadius: 20,
-                      whiteSpace: 'pre-wrap', 
-                      lineHeight: 1.6,
-                      fontSize: 15,
-                      maxWidth: '85%',
-                      border: isUser ? '1px solid rgba(255,255,255,0.05)' : 'none'
-                    }}>
-                      {!isUser && (
-                         <div style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="url(#geminiGlow)">
-                              <defs>
-                                <linearGradient id="geminiGlow" x1="0" y1="0" x2="24" y2="24">
-                                  <stop offset="0%" stopColor="#4285f4"/>
-                                  <stop offset="50%" stopColor="#9b72cb"/>
-                                  <stop offset="100%" stopColor="#d96570"/>
-                                </linearGradient>
-                              </defs>
-                              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                            </svg>
-                            <span style={{ fontSize: 13, fontWeight: 600 }} className="gemini-text-glow">Aura</span>
-                         </div>
-                      )}
-                      {msg.content}
-                    </div>
-                  </div>
-                );
-              })}
-              {loading && (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                  <div style={{ padding: '12px 18px' }}>
-                    <Spin size="small" /> <span style={{ marginLeft: 8, color: '#c4c7c5', fontSize: 14 }}>Aura 正在生成洞察...</span>
-                  </div>
+        <div ref={listRef} style={{ flex: 1, overflowY: 'auto', padding: '40px', scrollBehavior: 'smooth' }}>
+          <AnimatePresence initial={false}>
+            {messages.length === 0 ? (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                style={{ textAlign: 'center', marginTop: 80 }}
+              >
+                <div style={{ 
+                  width: 72, height: 72, 
+                  margin: '0 auto 32px', 
+                  borderRadius: '18px', 
+                  background: 'var(--aura-blue)', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  boxShadow: '0 0 40px rgba(66, 133, 244, 0.2)'
+                }}>
+                  <Sparkles size={32} color="white" />
                 </div>
-              )}
-            </div>
-          )}
+                <Title level={3} className="outfit" style={{ fontWeight: 600, color: 'var(--text-primary)' }}>我是 Aura</Title>
+                <Text style={{ fontSize: 16, color: 'var(--text-tertiary)', lineHeight: 1.8 }}>
+                  您的私人办公健康助手。您可以询问关于心率、<br/>血压趋势，或是如何缓解办公疲劳。
+                </Text>
+              </motion.div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+                {messages.map((msg) => {
+                  const isUser = msg.role === 'user';
+                  return (
+                    <motion.div 
+                      key={msg.id}
+                      initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      style={{ 
+                        display: 'flex', 
+                        gap: 20,
+                        flexDirection: isUser ? 'row-reverse' : 'row',
+                        alignItems: 'flex-start'
+                      }}
+                    >
+                      <div style={{ 
+                        width: 36, height: 36, 
+                        borderRadius: '10px', 
+                        background: isUser ? 'var(--bg-card-hover)' : 'var(--aura-blue)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        flexShrink: 0,
+                        border: '1px solid var(--glass-border)'
+                      }}>
+                        {isUser ? <User size={18} color="var(--text-secondary)" /> : <Bot size={18} color="white" />}
+                      </div>
+                      
+                      <div style={{
+                        padding: isUser ? '14px 20px' : '0', 
+                        background: isUser ? 'var(--bg-card-hover)' : 'transparent',
+                        borderRadius: '18px',
+                        color: 'var(--text-primary)',
+                        maxWidth: '75%',
+                        lineHeight: 1.7,
+                        fontSize: 15,
+                        border: isUser ? '1px solid var(--glass-border)' : 'none'
+                      }}>
+                        {msg.content}
+                      </div>
+                    </motion.div>
+                  );
+                })}
+                {loading && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'flex', gap: 20 }}>
+                     <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'var(--aura-blue)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Bot size={18} color="white" />
+                      </div>
+                      <div style={{ padding: '12px 0' }}>
+                        <Spin size="small" />
+                      </div>
+                  </motion.div>
+                )}
+              </div>
+            )}
+          </AnimatePresence>
         </div>
 
-        <div style={{ padding: '16px 24px', background: 'rgba(30,31,34,0.8)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', background: '#131314', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, padding: '4px 6px' }}>
+        <div style={{ padding: '24px 40px 40px' }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            background: 'var(--bg-card)', 
+            border: '1px solid var(--glass-border)', 
+            borderRadius: '20px', 
+            padding: '8px 12px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
+          }}>
             <Input
               value={input}
               onChange={e => setInput(e.target.value)}
               onPressEnter={handleSend}
-              placeholder="向 Aura 提问..."
-              disabled={loading}
+              placeholder="向 Aura 询问您的健康建议..."
               bordered={false}
-              style={{ fontSize: 15, padding: '8px 16px', color: '#e3e3e3', background: 'transparent' }}
+              style={{ fontSize: 16, padding: '8px 16px', color: 'var(--text-primary)', background: 'transparent' }}
             />
-            <div 
+            <motion.div 
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               onClick={handleSend}
               style={{ 
-                width: 32, height: 32, 
-                borderRadius: '50%', 
-                background: input.trim() ? '#e3e3e3' : '#3c4043', 
+                width: 40, height: 40, 
+                borderRadius: '14px', 
+                background: input.trim() ? 'var(--aura-blue)' : 'var(--bg-card-hover)', 
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 cursor: input.trim() ? 'pointer' : 'default',
-                transition: 'background 0.2s ease',
-                flexShrink: 0
+                transition: 'all 0.3s var(--ease-out-expo)'
               }}>
-              <ArrowUpOutlined style={{ color: input.trim() ? '#131314' : '#757575', fontSize: 16 }} />
-            </div>
+              <ArrowUp size={20} color={input.trim() ? 'white' : 'var(--text-tertiary)'} />
+            </motion.div>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
