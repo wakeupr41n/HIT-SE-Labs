@@ -63,7 +63,7 @@ export default function Dashboard() {
       <header style={{ marginBottom: 60, marginTop: 20 }}>
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
           <div className="glass-pill" style={{ width: 'fit-content', marginBottom: 24 }}>Aura Intelligence Pro</div>
-          <Title level={1} style={{ fontSize: 'clamp(32px, 5vw, 56px)', fontWeight: 700, margin: 0 }}>
+          <Title level={1} className="syne-display" style={{ fontSize: 'clamp(32px, 5vw, 56px)', margin: 0 }}>
             <span className="gemini-gradient-text">你好，{latest.user_id ? '准备好今天的健康挑战了吗？' : '欢迎回来'}</span>
           </Title>
           <Text style={{ fontSize: 18, color: 'var(--text-secondary)', display: 'block', marginTop: 12 }}>
@@ -77,10 +77,9 @@ export default function Dashboard() {
         initial="hidden"
         animate="show"
         className="bento-grid"
-        style={{ gridTemplateRows: 'repeat(2, 240px)' }}
       >
-        {/* Vital Signs - Large Card (2x2) */}
-        <motion.div variants={item} className="bento-card" style={{ gridColumn: 'span 2', gridRow: 'span 2', background: 'linear-gradient(135deg, #1a1a1c 0%, #161618 100%)' }}>
+        {/* Vital Signs - Large Asymmetrical Card (7 cols) */}
+        <motion.div variants={item} className="bento-card" style={{ gridColumn: 'span 7', gridRow: 'span 2', background: 'linear-gradient(135deg, rgba(20,20,24,0.8) 0%, rgba(10,10,12,0.9) 100%)', backdropFilter: 'blur(20px)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
               <Title level={4} style={{ color: 'var(--text-secondary)', fontWeight: 500, marginBottom: 4 }}>核心生命体征</Title>
@@ -93,16 +92,16 @@ export default function Dashboard() {
 
           <div style={{ marginTop: 40, display: 'flex', gap: 60 }}>
             <div>
-              <Text style={{ fontSize: 14, color: 'var(--text-tertiary)', display: 'block', marginBottom: 8 }}>静息心率</Text>
+              <Text style={{ fontSize: 14, color: 'var(--text-tertiary)', display: 'block', marginBottom: 8, letterSpacing: '0.05em' }}>RESTING HR</Text>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                <span style={{ fontSize: 56, fontWeight: 600, fontFamily: 'Outfit' }}>{latest.heart_rate}</span>
+                <span className="syne-display" style={{ fontSize: 64, lineHeight: 1 }}>{latest.heart_rate}</span>
                 <span style={{ fontSize: 16, color: 'var(--text-tertiary)' }}>BPM</span>
               </div>
             </div>
             <div>
-              <Text style={{ fontSize: 14, color: 'var(--text-tertiary)', display: 'block', marginBottom: 8 }}>当前血压</Text>
+              <Text style={{ fontSize: 14, color: 'var(--text-tertiary)', display: 'block', marginBottom: 8, letterSpacing: '0.05em' }}>BLOOD PRESSURE</Text>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                <span style={{ fontSize: 56, fontWeight: 600, fontFamily: 'Outfit' }}>{latest.systolic_bp}</span>
+                <span className="syne-display" style={{ fontSize: 64, lineHeight: 1 }}>{latest.systolic_bp}</span>
                 <span style={{ fontSize: 24, color: 'var(--text-tertiary)', fontWeight: 300 }}>/ {latest.diastolic_bp}</span>
               </div>
             </div>
@@ -116,16 +115,16 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
-        {/* Activity - Horizontal Card (2x1) */}
-        <motion.div variants={item} className="bento-card" style={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'space-between' }}>
+        {/* Activity - Horizontal Card (span 5) */}
+        <motion.div variants={item} className="bento-card" style={{ gridColumn: 'span 5', display: 'flex', justifyContent: 'space-between', padding: '36px 30px' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-              <Footprints size={20} color="var(--aura-orange)" />
+              <Footprints size={20} color="var(--aura-accent)" />
               <span style={{ fontWeight: 500, color: 'var(--text-secondary)' }}>每日动态</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-              <span style={{ fontSize: 48, fontWeight: 600, fontFamily: 'Outfit' }}>{latest.steps}</span>
-              <span style={{ color: 'var(--text-tertiary)' }}>/ 10,000</span>
+              <span className="syne-display" style={{ fontSize: 44, lineHeight: 1 }}>{latest.steps}</span>
+              <span style={{ color: 'var(--text-tertiary)' }}>/ 10k</span>
             </div>
             <div style={{ width: '100%', height: 6, background: 'rgba(255,255,255,0.05)', borderRadius: 10, marginTop: 16, overflow: 'hidden' }}>
               <motion.div 
@@ -139,28 +138,28 @@ export default function Dashboard() {
           <div style={{ width: 120, height: '100%', opacity: 0.5 }}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData.slice(-5)}>
-                <Area type="monotone" dataKey="hr" stroke="var(--aura-orange)" fill="var(--aura-orange)" fillOpacity={0.1} strokeWidth={2} />
+                <Area type="monotone" dataKey="hr" stroke="var(--aura-cyan)" fill="var(--aura-cyan)" fillOpacity={0.1} strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </motion.div>
 
-        {/* Sleep - Square (1x1) */}
-        <motion.div variants={item} className="bento-card" style={{ display: 'flex', flexDirection: 'column' }}>
+        {/* Sleep - Square (span 3) */}
+        <motion.div variants={item} className="bento-card" style={{ gridColumn: 'span 3', display: 'flex', flexDirection: 'column' }}>
           <Moon size={20} color="var(--aura-purple)" style={{ marginBottom: 16 }} />
           <Text style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>深度睡眠</Text>
           <div style={{ marginTop: 'auto' }}>
-            <span style={{ fontSize: 40, fontWeight: 600, fontFamily: 'Outfit' }}>{latest.sleep_hours}</span>
+            <span className="syne-display" style={{ fontSize: 40 }}>{latest.sleep_hours}</span>
             <span style={{ fontSize: 14, color: 'var(--text-tertiary)', marginLeft: 6 }}>hrs</span>
           </div>
         </motion.div>
 
-        {/* Water - Square (1x1) */}
-        <motion.div variants={item} className="bento-card" style={{ display: 'flex', flexDirection: 'column' }}>
+        {/* Water - Square (span 2) */}
+        <motion.div variants={item} className="bento-card" style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'column' }}>
           <Droplets size={20} color="var(--aura-blue)" style={{ marginBottom: 16 }} />
           <Text style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>累计饮水</Text>
           <div style={{ marginTop: 'auto' }}>
-            <span style={{ fontSize: 40, fontWeight: 600, fontFamily: 'Outfit' }}>{latest.water_intake}</span>
+            <span className="syne-display" style={{ fontSize: 40 }}>{latest.water_intake}</span>
             <span style={{ fontSize: 14, color: 'var(--text-tertiary)', marginLeft: 6 }}>ml</span>
           </div>
         </motion.div>
@@ -176,8 +175,8 @@ export default function Dashboard() {
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
           <div>
-             <Title level={3} style={{ fontWeight: 600, margin: 0, color: 'var(--text-primary)' }}>长期数据趋势</Title>
-             <Text style={{ color: 'var(--text-tertiary)' }}>对比 14 天内的各项体征波动曲线</Text>
+             <Title level={3} className="syne-display" style={{ margin: 0, color: 'var(--text-primary)' }}>体征趋势分析</Title>
+             <Text style={{ color: 'var(--text-tertiary)' }}>多维交叉的长期数据波动曲线</Text>
           </div>
           <div style={{ display: 'flex', gap: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

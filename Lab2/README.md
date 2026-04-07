@@ -12,49 +12,42 @@
 | AI | SiliconFlow (Qwen / DeepSeek) |
 | 设计 | Aura V3 Design System (Bento Grid + Glassmorphism) |
 
-## 快速启动
+## 快速启动 (Quick Start)
 
-### 1. 安装依赖
+### 1. 配置环境变量 (关键步)
+后端去除了硬编码的 API Key 以保证安全。请在 `backend` 目录下创建或修改 `.env` 文件：
+```
+OPENAI_API_KEY=sk-your-siliconflow-key
+```
+*(免费获取 Key：访问 https://cloud.siliconflow.cn/ 注册即可获取)*
+
+### 2. 安装依赖
 
 ```bash
-# 后端
+# 安装后端依赖
 cd backend
 pip install -r requirements.txt
 
-# 前端
-cd frontend
+# 安装前端依赖
+cd ../frontend
 npm install
 ```
 
-### 2. 构建前端
+### 3. 本地开发模式运行（推荐用于检查）
+
+请打开**两个独立的终端**分别运行前后端：
 
 ```bash
-cd frontend
-npm run build
-```
-
-### 3. 启动服务
-
-```bash
-cd backend
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
-```
-
-打开浏览器访问 **http://localhost:8000** 即可使用。
-
-### 4. 开发模式（前后端分离）
-
-```bash
-# 终端 1：启动后端（热重载）
+# 终端 1：启动 FastAPI 后端（内置热重载）
 cd backend
 python -m uvicorn app.main:app --reload --port 8000
 
-# 终端 2：启动前端开发服务器
+# 终端 2：启动 Vite 前端
 cd frontend
 npm run dev
 ```
 
-前端开发服务器运行在 `http://localhost:5173`，API 请求自动代理至后端。
+前端开发服务器将运行在 `http://localhost:5173`。请在浏览器中打开此地址即可体验完整的 Aura V3 高阶设计。
 
 ## 项目结构
 
@@ -103,16 +96,6 @@ python -m pytest tests/ --cov=app --cov-report=term-missing
 - [ ] 智能提醒（久坐、饮水、异常预警）
 - [ ] AI 周报 / 月报
 - [ ] PDF 健康报告导出
-
-## 环境变量（可选）
-
-在 `backend/.env` 中配置：
-
-```
-SILICONFLOW_API_KEY=sk-your-key-here
-```
-
-若不配置，系统将使用内置的 fallback key。
 
 ## 分支说明
 

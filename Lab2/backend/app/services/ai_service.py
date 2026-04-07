@@ -107,7 +107,7 @@ def get_ai_response(user, records, history, user_message: str) -> str:
     """
     Get AI response using standard native Python HTTP requests to avoid proxy hangs.
     """
-    api_key = os.getenv("OPENAI_API_KEY", "sk-dybxksizrzlqkjkicofpuxistemaksldanmfxvychbibcikk")
+    api_key = os.getenv("OPENAI_API_KEY")
 
     if api_key and api_key != "":
         try:

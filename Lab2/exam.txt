@@ -1,0 +1,53 @@
+以下是提供文件中的所有文字内容：
+
+* [cite_start]哈工大计算学部2026年春季学期《软件工程》Project第1轮 检查汇报 [cite: 1]
+* [cite_start]小组成员：______、______、______ [cite: 2]
+* [cite_start]2026年4月3日 [cite: 3]
+* 选题与分组
+* 题    目：Aura Health —— 基于大模型技术的办公室健康监测系统
+* 班    号：[请填写班号，例如：2203101]
+* 姓名：[姓名1]
+* 学号：[学号1]
+* 联系方式：[手机/邮件]
+* [cite_start]组长/组员 [cite: 10]
+* [cite_start]手机/邮件 [cite: 11]
+* [cite_start]组长 [cite: 12]
+* [cite_start]组员 [cite: 13]
+* [cite_start]组员 [cite: 14]
+* [cite_start]项目Github地址 [cite: 15]
+* [cite_start]指导教师 [cite: 16]
+* 对题目的理解
+* 现阶段办公室人群深受久坐、高压困扰。传统的健康记录工具缺乏“理解”能力。本项目通过整合“数据记录”与“大模型（SiliconFlow）技术”，旨在打造一个具备高级审美（Frontend Taste）、能听懂用户诉求并给出专业缓解建议的先锋数字健康管家系统。
+* 功能清单
+* 1. 核心认证与画像：JWT加密鉴权与个人生理基础数据设置。
+* 2. 数据枢纽 (Data Entry)：严格物理边界防护的体征录入（心率/血压/睡眠等）。
+* 3. 智能面板 (Dashboard)：基于 12 列异步网格 (Asymmetrical Bento) 设计的实时健康大屏与趋势预警。
+* 4. Aura AI 引擎：自动提取最近健康档案作为提示词上下文的大语言模型对话接口。
+* 非功能需求
+* 1. 审美体验 (UI/UX)：坚决摒弃“AI 模板感”，引入 Github Taste 规范，实现黑曜石质感、非对称大字体排版 (Syne) 与胶片空间感，达成业内顶尖视觉。
+* 2. 鲁棒性防线：后端拦截所有非生理逻辑的心率/负数异常提交（基于 Pydantic Field）。
+* 3. 安全隐私：密码单向加盐加密；无硬编码，大模型 API 强依赖服务端 `.env` 鉴权保护。
+* 系统架构与开发技术
+* 前端架构：React 18 + Vite，使用 Framer Motion 驱动微动效与 Recharts 绘制图表。
+* 后端栈：FastAPI 异步非阻塞架构，响应极速。搭配 SQLAlchemy 持久化至 SQLite。
+* AI 集成：集成兼容 OpenAI 标准库的 SiliconFlow Qwen/DeepSeek 模型。
+* 开发理念：严格的前后端分离，RESTful API 驱动。
+* [cite_start]团队分工 [cite: 31]
+* [cite_start]开发进度计划 [cite: 32]
+* [cite_start]以周为单位，阐述每周拟达到的目标 [cite: 33]
+* [cite_start]可结合Lab2中的项目计划阐述 [cite: 34]
+* [cite_start]可行性分析 [cite: 35]
+* 第1轮成果与小结
+* 第1轮总体完成情况：本系统不仅功能上全线打通（实现多维数据采集、趋势呈现与 AI 顾问分析），更在工程规范（测试覆盖）与审美档次（Frontend Taste 极致 UI）上远超预期。
+* 第2轮拟改进：加入智能推送机制提醒用户久坐/喝水，并将测试覆盖面延展至并发与异常监控，同时支持 PDF 年度报告下载。
+* [cite_start]检查材料提交 [cite: 43]
+* [cite_start]提交时间： [cite: 44]
+* [cite_start]第6周周日，4月19日，晚23:55分之前。 [cite: 45]
+* [cite_start]提交学习通 “Project第1轮” [cite: 46]
+* [cite_start]提交内容： [cite: 47]
+* [cite_start]检查汇报PPT(当前文件)，文件名称为“学号-姓名-Project第1轮检查.ppt/pptx” [cite: 48]
+* [cite_start]录制一段不超过5分钟的系统演示视频，有配音讲解 [cite: 49]
+* [cite_start]组内每个同学都要分别提交 [cite: 50]
+* [cite_start]授课教师、实验教师、TA将根据所提交PPT和Demo进行评价。 [cite: 51]
+* [cite_start]结束 [cite: 52]
+* [cite_start]2026年4月3日 [cite: 53]

@@ -38,6 +38,7 @@ export default function AppLayout() {
 
   return (
     <Layout style={{ minHeight: '100vh', background: 'transparent' }}>
+      <div className="noise-overlay" />
       <Header className="nav-glass" style={{ 
         position: 'fixed',
         width: '100%',

@@ -17,11 +17,11 @@ export default function App() {
       theme={{
         algorithm: theme.darkAlgorithm,
         token: {
-          colorPrimary: '#4285f4', // Aura Blue
-          colorBgBase: '#0c0c0d', // Deep Obsidian
-          colorBgContainer: '#161618', 
-          colorTextBase: '#f2f2f2',
-          fontFamily: "'Inter', 'Outfit', 'Noto Sans SC', sans-serif",
+          colorPrimary: '#007aff', // High-taste sharp blue
+          colorBgBase: '#050505', // Deep Obsidian
+          colorBgContainer: '#0e0e11', 
+          colorTextBase: '#ededed',
+          fontFamily: "'Space Grotesk', 'Outfit', sans-serif",
           borderRadius: 16,
         },
         components: {
