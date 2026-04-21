@@ -1,61 +1,107 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+/**
+ * Directed graph data structure using adjacency list.
+ */
 public class Graph {
-    private Map<String, Map<String, Integer>> adjacencyList;
+  private Map<String, Map<String, Integer>> adjacencyList;
 
-    public Graph() {
-        this.adjacencyList = new HashMap<>();
-    }
+  /**
+   * Construct an empty graph.
+   */
+  public Graph() {
+    this.adjacencyList = new HashMap<>();
+  }
 
-    public void addEdge(String source, String destination) {
-        source = source.toLowerCase();
-        destination = destination.toLowerCase();
-        
-        adjacencyList.putIfAbsent(source, new HashMap<>());
-        adjacencyList.putIfAbsent(destination, new HashMap<>());
-        
-        Map<String, Integer> edges = adjacencyList.get(source);
-        edges.put(destination, edges.getOrDefault(destination, 0) + 1);
-    }
+  /**
+   * Add a directed edge from source to destination.
+   *
+   * @param source the source node
+   * @param destination the destination node
+   */
+  public void addEdge(String source, String destination) {
+    source = source.toLowerCase();
+    destination = destination.toLowerCase();
 
-    public Set<String> getNodes() {
-        return adjacencyList.keySet();
-    }
+    adjacencyList.putIfAbsent(source, new HashMap<>());
+    adjacencyList.putIfAbsent(destination, new HashMap<>());
 
-    public Map<String, Integer> getEdges(String node) {
-        return adjacencyList.getOrDefault(node.toLowerCase(), Collections.emptyMap());
-    }
+    Map<String, Integer> edges = adjacencyList.get(source);
+    edges.put(destination, edges.getOrDefault(destination, 0) + 1);
+  }
 
-    public boolean containsNode(String node) {
-        return adjacencyList.containsKey(node.toLowerCase());
-    }
+  /**
+   * Get all nodes in the graph.
+   *
+   * @return set of node names
+   */
+  public Set<String> getNodes() {
+    return adjacencyList.keySet();
+  }
 
-    public int getWeight(String source, String destination) {
-        Map<String, Integer> edges = adjacencyList.get(source.toLowerCase());
-        if (edges == null) return 0;
-        return edges.getOrDefault(destination.toLowerCase(), 0);
+  /**
+   * Get outgoing edges from a node.
+   *
+   * @param node the node name
+   * @return map of neighbor nodes to edge weights
+   */
+  public Map<String, Integer> getEdges(String node) {
+    return adjacencyList.getOrDefault(
+        node.toLowerCase(), Collections.emptyMap());
+  }
+
+  /**
+   * Check if a node exists in the graph.
+   *
+   * @param node the node name
+   * @return true if the node exists
+   */
+  public boolean containsNode(String node) {
+    return adjacencyList.containsKey(node.toLowerCase());
+  }
+
+  /**
+   * Get the weight of an edge.
+   *
+   * @param source the source node
+   * @param destination the destination node
+   * @return the edge weight, or 0 if no edge exists
+   */
+  public int getWeight(String source, String destination) {
+    Map<String, Integer> edges =
+        adjacencyList.get(source.toLowerCase());
+    if (edges == null) {
+      return 0;
     }
-    
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (String source : adjacencyList.keySet()) {
-            sb.append(source).append(" -> ");
-            Map<String, Integer> edges = adjacencyList.get(source);
-            if (edges.isEmpty()) {
-                sb.append("(no outgoing edges)");
-            } else {
-                List<String> edgeStrings = new ArrayList<>();
-                for (Map.Entry<String, Integer> entry : edges.entrySet()) {
-                    edgeStrings.add(entry.getKey() + "(" + entry.getValue() + ")");
-                }
-                sb.append(String.join(", ", edgeStrings));
-            }
-            sb.append("\n");
+    return edges.getOrDefault(destination.toLowerCase(), 0);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    for (Map.Entry<String, Map<String, Integer>> entry
+        : adjacencyList.entrySet()) {
+      String source = entry.getKey();
+      Map<String, Integer> edges = entry.getValue();
+      sb.append(source).append(" -> ");
+      if (edges.isEmpty()) {
+        sb.append("(no outgoing edges)");
+      } else {
+        List<String> edgeStrings = new ArrayList<>();
+        for (Map.Entry<String, Integer> edgeEntry
+            : edges.entrySet()) {
+          edgeStrings.add(edgeEntry.getKey()
+              + "(" + edgeEntry.getValue() + ")");
         }
-        return sb.toString();
+        sb.append(String.join(", ", edgeStrings));
+      }
+      sb.append(System.lineSeparator());
     }
+    return sb.toString();
+  }
 }
-// Resolved conflict: Comments from B1 and C4 preserved
-// Comment from B1
-// Comment from C4
