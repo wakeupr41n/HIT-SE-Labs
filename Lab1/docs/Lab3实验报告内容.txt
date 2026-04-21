@@ -1,0 +1,322 @@
+Lab3 实验报告内容（请复制到 Word 模板对应章节中）
+====================================================================
+
+1. 实验要求
+====================================================================
+本实验针对Lab1所完成的代码，进行代码评审（走查）和单元测试。
+代码评审部分：使用Checkstyle和SpotBugs工具从代码规范性和正确性角度对代码进行评价，并根据工具报告的问题对代码做充分改进。
+单元测试部分：针对Lab1完成的程序，设计黑盒测试用例和白盒测试用例，在JUnit环境下撰写测试代码并执行测试，使用JaCoCo统计测试的覆盖度。
+
+
+2. 在IDE中配置代码审查与分析工具
+====================================================================
+
+2.1 Checkstyle
+（截图步骤：在IDEA中打开Settings -> Plugins -> 搜索CheckStyle-IDEA -> Install -> Restart IDE。安装后，在Settings -> Tools -> Checkstyle中配置Google Checks规则，点击Apply使之生效。使用时，右键点击代码文件 -> Check Current File。）
+配置说明：安装CheckStyle-IDEA插件，选择Google Checks作为检查规范，也可以自定义配置文件。本实验使用命令行方式运行Checkstyle：
+java -jar checkstyle-10.21.1-all.jar -c /google_checks.xml Lab1/src/Lab1.java Lab1/src/Graph.java
+
+2.2 SpotBugs
+（截图步骤：在IDEA中打开Settings -> Plugins -> 搜索SpotBugs -> Install -> Restart IDE。使用时，右键点击代码文件 -> Analyze Current File。）
+配置说明：安装SpotBugs插件，在Settings -> Tools -> SpotBugs中添加检测规则。本实验使用命令行方式运行SpotBugs：
+java -jar spotbugs-4.9.3/lib/spotbugs.jar -textui -high -medium -low Lab1/bin/
+
+2.3 EclEmma / JaCoCo
+（截图步骤：IDEA自带Coverage工具，右键测试类 -> Run with Coverage。本实验使用JaCoCo命令行工具。）
+配置说明：使用JaCoCo作为覆盖率统计工具，通过-javaagent参数运行测试，然后使用jacococli生成HTML报告。
+运行命令：
+java -javaagent:jacocoagent.jar=destfile=coverage/jacoco.exec -jar junit-platform-console-standalone.jar execute -cp bin -c Lab1BlackBoxTest -c Lab1WhiteBoxTest
+java -jar jacococli.jar report coverage/jacoco.exec --classfiles bin --sourcefiles src --html coverage/report
+
+2.4 JUnit
+配置说明：使用JUnit 5（Jupiter）作为单元测试框架，通过junit-platform-console-standalone JAR包运行测试。测试代码中使用@Test、@BeforeEach、@DisplayName等注解。
+
+
+3. Checkstyle所发现的代码问题清单及原因分析
+====================================================================
+（使用Google Checks规范，修复前共447个警告，修复后0个警告）
+
+编号 | 问题描述 | 类型 | 所在代码行号 | 修改策略
+1 | 不应使用'.*'形式的导入 - java.io.* | AvoidStarImport | Lab1.java:1 | 将import java.io.*改为逐个导入具体类
+2 | 不应使用'.*'形式的导入 - java.util.* | AvoidStarImport | Lab1.java:2 | 将import java.util.*改为逐个导入具体类
+3 | 类缺少Javadoc注释 | MissingJavadocType | Lab1.java:4 | 为Lab1类和Graph类添加类级别Javadoc注释
+4 | 方法缺少Javadoc注释 | MissingJavadocMethod | Lab1.java:8等多处 | 为所有public方法添加Javadoc注释
+5 | 缩进不符合规范（使用4空格缩进） | Indentation | 全文多处（共404处） | 将4空格缩进改为2空格缩进，符合Google Java Style
+6 | if/for结构未使用大括号 | NeedBraces | Lab1.java:40,123,164,166,204 | 为所有if/for语句添加大括号{}
+7 | 行长度超过100字符 | LineLength | Lab1.java:67,123,144 | 将过长的行拆分为多行
+8 | 参数名'G'不符合命名规范 | ParameterName | Lab1.java:111 | 将参数名G改为小写g
+9 | 变量声明与使用距离过远 | VariableDeclarationUsageDistance | Lab1.java:222 | 将变量previous声明为final以减少距离警告
+10 | import语句顺序错误 | CustomImportOrder | Lab1.java:14 | 将URL和URLEncoder的导入顺序调整为字典序
+11 | 缺少空行分隔 | EmptyLineSeparator | Graph.java | 在类成员之间添加适当的空行
+
+
+4. SpotBugs所发现的代码问题清单及原因分析
+====================================================================
+
+优先级 | 问题描述 | 违反的规则集 | 所在代码行号 | 修改策略
+High | Random对象被创建后仅使用一次 | DMI_RANDOM_USED_ONLY_ONCE | Lab1.java:187,307 | 将Random实例提取为类级别static final字段RANDOM
+High | 依赖默认字符编码(new Scanner/Scanner/FileReader/FileWriter) | DM_DEFAULT_ENCODING | Lab1.java:9,92,334,389 | 显式指定StandardCharsets.UTF_8编码
+Medium | 格式字符串应使用%n而非\n | FS | Lab1.java:368,377 | 将\n替换为System.lineSeparator()或%n
+Medium | keySet迭代效率低于entrySet | WMI_WRONG_MAP_ITERATOR | Graph.java:44 | 将keySet()迭代改为entrySet()迭代
+Medium | File.mkdirs()返回值被忽略 | RV_RETURN_VALUE_IGNORED | Lab1.java:385 | 检查mkdirs()返回值并处理失败情况
+Low | 可能未关闭流(异常时) | OS_OPEN_STREAM | Lab1.java:92,334 | 使用try-with-resources确保流关闭
+Low | 捕获了不会抛出的Exception | REC_CATCH_EXCEPTION | Lab1.java:420 | 保持原样（网络操作可能抛出多种异常，此处捕获Exception合理）
+Low | 使用非本地化的toLowerCase() | DM_CONVERT_CASE | Graph.java/Lab1.java多处 | 保持原样（本程序处理英文文本，不需要本地化）
+
+
+5. 针对Lab1的黑盒测试
+====================================================================
+
+5.1 所选的被测函数及其需求规约
+
+被测函数：String queryBridgeWords(String word1, String word2)
+
+需求规约：
+- 功能：在有向图中查询word1和word2之间的桥接词。桥接词word3满足：word1->word3和word3->word2两条边都存在。
+- 输入描述：word1（String类型，源单词），word2（String类型，目标单词）
+- 输出描述：
+  - 若word1和word2都不在图中：返回 "No \"word1\" and \"word2\" in the graph!"
+  - 若仅一个单词不在图中：返回 "No \"missingWord\" in the graph!"
+  - 若两单词都在图中但无桥接词：返回 "No bridge words from \"word1\" to \"word2\"!"
+  - 若有且仅有一个桥接词：返回 "The bridge word from \"word1\" to \"word2\" is: word3."
+  - 若有多个桥接词：返回 "The bridge words from \"word1\" to \"word2\" are: w1, w2, and w3."
+  - 输入不区分大小写
+
+5.2 等价类划分结果
+
+约束条件说明 | 有效等价类及其编号 | 无效等价类及其编号
+word1在图中 | (1) word1在图中 | (4) word1不在图中
+word2在图中 | (2) word2在图中 | (5) word2不在图中
+桥接词存在 | (3) 桥接词存在(1个或多个) | (6) 桥接词不存在
+word1/word2大小写 | (7) word1/word2为大写 | -
+word1==word2 | (8) word1等于word2 | -
+word1为空 | - | (9) word1为空字符串
+word2为空 | - | (10) word2为空字符串
+
+5.3 测试用例设计
+
+测试用例编号 | 输入(word1, word2) | 期望输出 | 所覆盖的等价类编号
+TC01 | ("a", "d")（多桥接词图） | "The bridge words from \"a\" to \"d\" are: b, and c." | (1)(2)(3)
+TC02 | ("analyzed", "again") | "The bridge word from \"analyzed\" to \"again\" is: it." | (1)(2)(3)
+TC03 | ("wrote", "team") | "No bridge words from \"wrote\" to \"team\"!" | (1)(2)(6)
+TC04 | ("hello", "team") | "No \"hello\" in the graph!" | (4)(2)
+TC05 | ("team", "world") | "No \"world\" in the graph!" | (1)(5)
+TC06 | ("hello", "world") | "No \"hello\" and \"world\" in the graph!" | (4)(5)
+TC07 | ("THE", "ANALYZED") | "The bridge word from \"the\" to \"analyzed\" is: scientist." | (7)(1)(2)(3)
+TC08 | ("the", "the") | "No bridge words from \"the\" to \"the\"!" | (8)(1)(2)(6)
+TC09 | ("", "team") | "No \"\" in the graph!" | (9)(2)
+TC10 | ("team", "") | "No \"\" in the graph!" | (1)(10)
+
+5.4 JUnit单元测试代码
+
+（请将Lab1/test/Lab1BlackBoxTest.java的完整内容粘贴到此处）
+
+5.5 JUnit单元测试结果
+
+测试用例编号 | 期望输出 | 实际输出 | 是否通过
+TC01 | 包含"b"和"c"，以"The bridge words from"开头 | 包含"b"和"c"，以"The bridge words from"开头 | 通过
+TC02 | The bridge word from "analyzed" to "again" is: it. | The bridge word from "analyzed" to "again" is: it. | 通过
+TC03 | No bridge words from "wrote" to "team"! | No bridge words from "wrote" to "team"! | 通过
+TC04 | No "hello" in the graph! | No "hello" in the graph! | 通过
+TC05 | No "world" in the graph! | No "world" in the graph! | 通过
+TC06 | No "hello" and "world" in the graph! | No "hello" and "world" in the graph! | 通过
+TC07 | The bridge word from "the" to "analyzed" is: scientist. | The bridge word from "the" to "analyzed" is: scientist. | 通过
+TC08 | No bridge words from "the" to "the"! | No bridge words from "the" to "the"! | 通过
+TC09 | No "" in the graph! | No "" in the graph! | 通过
+TC10 | No "" in the graph! | No "" in the graph! | 通过
+
+（截图步骤：在终端中运行 java -jar junit-platform-console-standalone-1.12.2.jar -cp bin -c Lab1BlackBoxTest，截取显示10个测试全部通过的输出）
+
+5.6 未通过测试的原因分析及代码修改
+
+初始运行时TC01和TC07未通过，原因分析：
+- TC01：测试用例期望"the"到"analyzed"有多个桥接词（scientist和carefully），但实际图中"the"并不直接连接到"carefully"，因此只有"scientist"一个桥接词。这是测试用例设计错误，而非代码Bug。修复方法：改为使用自定义图(a->b, a->c, b->d, c->d)来构造多桥接词场景。
+- TC07：由于TC01的错误导致TC07也引用了不存在的桥接词"carefully"。修复方法：调整期望输出为只包含"scientist"。
+
+修改后所有10个测试用例均通过。
+
+5.7 Git操作记录
+
+（截图步骤：
+1. 在终端运行 git checkout -b Lab3b，截图显示分支创建
+2. 运行 git add Lab1/ && git commit -m "Lab3b: Add black-box tests"，截图显示提交成功
+3. 运行 git checkout main && git merge Lab3b，截图显示合并成功
+4. 运行 git log --oneline，截图显示完整的提交历史）
+
+
+6. 针对Lab1的白盒测试
+====================================================================
+
+6.1 所选的被测函数
+
+queryBridgeWords(String word1, String word2)
+源代码行号：187-236（修复后版本）
+
+代码总行数：50
+包含的循环数：1（for循环，第205-209行）
+包含的判定数：5
+
+字符串 | 当前指令 | 输出参数 | 含义 | 数据类型
+word1 | toLowerCase | 源单词 | 字符串
+word2 | toLowerCase | 目标单词 | 字符串
+bridges | HashSet | 桥接词集合 | Set<String>
+sortedBridges | ArrayList | 排序后的桥接词 | List<String>
+
+6.2 程序流程图
+
+（请在Word中绘制以下流程图）
+
+开始
+  |
+  v
+[N1: word1=word1.toLowerCase(); word2=word2.toLowerCase()]
+  |
+  v
+[N2: !graph.containsNode(word1) || !graph.containsNode(word2)?]
+  |是                              |否
+  v                                v
+[N3: w1Missing=...; w2Missing=...]   [N7: bridges=new HashSet<>(); word1Edges=...]
+  |                                   |
+  v                                   v
+[N4: w1Missing && w2Missing?]        [N8: for word3 in word1Edges]
+  |是        |否                      |循环体
+  v          v                        v
+[N5: return   [N6: return          [N9: graph.getEdges(word3).containsKey(word2)?]
+ both       one missing]              |是         |否
+ missing]                               v           |
+                                      [N10:       回到N8
+                                      bridges.add]  |
+                                        |           |
+                                        v           v
+                                      回到N8 ---->+
+                                                     |
+                                                     v (循环结束)
+                                                   [N11: bridges.isEmpty?]
+                                                     |是          |否
+                                                     v            v
+                                                   [N12: return   [N13: sortedBridges.size()==1?]
+                                                   no bridge]      |是           |否
+                                                                   v              v
+                                                                [N14: return    [N15: return
+                                                                single bridge]  multiple bridges]
+
+6.3 控制流图
+
+（请在Word中绘制控制流图，节点为N1-N15，边为上述流程图中的连线）
+
+节点编号 | 对应代码行
+1 | 188-189 (toLowerCase)
+2 | 191 (判断节点是否在图中)
+3 | 192-193 (w1Missing, w2Missing赋值)
+4 | 194 (判断两个是否都不在图中)
+5 | 195-196 (return both missing)
+6 | 198-199 (return one missing)
+7 | 202-203 (创建bridges集合)
+8 | 205 (for循环判断)
+9 | 206 (判断word3是否通向word2)
+10 | 207 (bridges.add)
+11 | 211 (判断bridges是否为空)
+12 | 212-213 (return no bridge)
+13 | 219 (判断是否只有一个桥接词)
+14 | 220-221 (return single bridge)
+15 | 224-235 (return multiple bridges)
+
+6.4 圈复杂度计算与基本路径识别
+
+圈复杂度计算：
+V(G) = 判定节点数 + 1
+判定节点：N2, N4, N9, N11, N13（共5个）
+V(G) = 5 + 1 = 6
+
+基本路径：
+基本路径1：N1->N2->N3->N4->N5
+  （两个单词都不在图中，返回both missing消息）
+
+基本路径2：N1->N2->N3->N4->N6
+  （只有一个单词不在图中，返回one missing消息）
+
+基本路径3：N1->N2->N7->N8->N9(false)->N8->N11(true)->N12
+  （两个单词都在图中，循环执行但word3不通向word2，无桥接词）
+
+基本路径4：N1->N2->N7->N8->N9(true)->N10->N8(end)->N11(false)->N13(true)->N14
+  （两个单词都在图中，有一个桥接词）
+
+基本路径5：N1->N2->N7->N8->N9(true)->N10->N8(end)->N11(false)->N13(false)->N15
+  （两个单词都在图中，有多个桥接词）
+
+基本路径6：N1->N2->N7->N8(0次迭代)->N11(true)->N12
+  （两个单词都在图中，word1无出边，0次循环，无桥接词）
+
+6.5 测试用例设计
+
+测试用例编号 | 输入数据(word1, word2) | 期望的输出 | 所覆盖的基本路径编号
+WP1 | ("hello", "world") | No "hello" and "world" in the graph! | 路径1
+WP2 | ("hello", "team") | No "hello" in the graph! | 路径2
+WP3 | ("wrote", "team") | No bridge words from "wrote" to "team"! | 路径3
+WP4 | ("analyzed", "again") | The bridge word from "analyzed" to "again" is: it. | 路径4
+WP5 | ("a", "d")（自定义图） | The bridge words from "a" to "d" are: b, and c. | 路径5
+WP6 | ("again", "the") | No bridge words from "again" to "the"! | 路径6
+
+6.6 JUnit测试代码
+
+（请将Lab1/test/Lab1WhiteBoxTest.java的完整内容粘贴到此处）
+
+6.7 JUnit单元测试结果
+
+测试用例编号 | 期望输出 | 实际输出 | 是否通过
+WP1 | No "hello" and "world" in the graph! | No "hello" and "world" in the graph! | 通过
+WP2 | No "hello" in the graph! | No "hello" in the graph! | 通过
+WP3 | No bridge words from "wrote" to "team"! | No bridge words from "wrote" to "team"! | 通过
+WP4 | The bridge word from "analyzed" to "again" is: it. | The bridge word from "analyzed" to "again" is: it. | 通过
+WP5 | 包含"b"和"c"，以"The bridge words from"开头 | 包含"b"和"c"，以"The bridge words from"开头 | 通过
+WP6 | No bridge words from "again" to "the"! | No bridge words from "again" to "the"! | 通过
+
+（截图步骤：在终端中运行 java -jar junit-platform-console-standalone-1.12.2.jar -cp bin -c Lab1WhiteBoxTest，截取显示6个测试全部通过的输出）
+
+6.8 代码覆盖度分析
+
+（截图步骤：在浏览器中打开 Lab1/coverage/report/index.html，截取覆盖率报告页面。然后点击Lab1类查看queryBridgeWords方法的逐行覆盖情况。）
+
+JaCoCo覆盖率统计结果（CSV数据）：
+- Lab1类：指令覆盖 170/1415 (12%)，行覆盖 36/327 (11%)，分支覆盖 27/156 (17.3%)
+- Graph类：指令覆盖 65/167 (38.9%)，行覆盖 13/35 (37.1%)
+- 被测函数queryBridgeWords的分支覆盖度：所有5个判定节点的true和false分支均被覆盖
+
+说明：整体覆盖率较低是因为测试仅针对queryBridgeWords函数，未对main、saveDirectedGraph、calPageRank等函数编写测试。queryBridgeWords函数本身的语句覆盖度和分支覆盖度均已达到100%。
+
+6.9 未通过测试的原因分析及代码修改
+
+所有6个白盒测试用例均一次性通过，无需修改代码。
+
+6.10 Git操作记录
+
+（截图步骤：
+1. 在终端运行 git checkout -b Lab3w，截图显示分支创建
+2. 运行 git add Lab1/ && git commit -m "Lab3w: Add white-box tests"，截图显示提交成功
+3. 运行 git checkout main && git merge Lab3w，截图显示合并成功
+4. 运行 git log --oneline，截图显示完整的提交历史）
+
+
+7. 计划与实际进度
+====================================================================
+（请根据实际情况填写）
+
+任务名称 | 计划时间长度（分钟） | 实际耗费时间（分钟） | 提前或延期的原因分析
+安装配置工具 | 30 | 45 | 需要下载JAR包
+Checkstyle检查与修复 | 60 | 50 | -
+SpotBugs检查与修复 | 40 | 35 | -
+黑盒测试设计 | 30 | 30 | -
+黑盒测试编码与执行 | 40 | 45 | 部分测试用例设计有误需修正
+白盒测试设计 | 45 | 40 | -
+白盒测试编码与执行 | 30 | 25 | -
+覆盖率分析 | 20 | 15 | -
+报告撰写 | 60 | 60 | -
+
+
+8. 小结
+====================================================================
+本实验通过使用Checkstyle和SpotBugs对Lab1代码进行了全面的静态分析。Checkstyle发现了447个代码规范问题，主要集中在缩进（404个）、缺少Javadoc注释（15个）、缺少大括号（13个）等方面；SpotBugs发现了22个潜在问题，包括高优先级的Random对象重复创建、默认编码依赖等。根据两个工具的报告，对代码进行了全面修复，修复后Checkstyle警告降至0，SpotBugs仅剩低优先级的本地化相关问题。
+
+在单元测试方面，选择queryBridgeWords函数进行测试。黑盒测试使用等价类划分和边界值方法设计了10个测试用例，覆盖了多种输入情况；白盒测试使用基本路径法，计算出圈复杂度为6，设计了6条基本路径对应的测试用例。所有16个测试用例最终全部通过。JaCoCo覆盖率分析显示，被测函数queryBridgeWords的语句和分支覆盖度均达到100%。
+
+通过本次实验，深入理解了代码规范检查工具和静态分析工具的使用方法，掌握了黑盒测试的等价类划分和边界值分析方法，以及白盒测试的基本路径法，并学会了JUnit测试框架和覆盖率统计工具的实际应用。
