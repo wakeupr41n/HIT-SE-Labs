@@ -41,7 +41,7 @@ java -jar jacococli.jar report coverage/jacoco.exec --classfiles bin --sourcefil
 2 | 不应使用'.*'形式的导入 - java.util.* | AvoidStarImport | Lab1.java:2 | 将import java.util.*改为逐个导入具体类
 3 | 类缺少Javadoc注释 | MissingJavadocType | Lab1.java:4 | 为Lab1类和Graph类添加类级别Javadoc注释
 4 | 方法缺少Javadoc注释 | MissingJavadocMethod | Lab1.java:8等多处 | 为所有public方法添加Javadoc注释
-5 | 缩进不符合规范（使用4空格缩进） | Indentation | 全文多处（共404处） | 将4空格缩进改为2空格缩进，符合Google Java Style
+5 | 缩进不符合规范（使用4空格缩进） | Indentation | 全文多处（共404处） | 将4空格缩进改为2空格缩进1，符合Google Java Style
 6 | if/for结构未使用大括号 | NeedBraces | Lab1.java:40,123,164,166,204 | 为所有if/for语句添加大括号{}
 7 | 行长度超过100字符 | LineLength | Lab1.java:67,123,144 | 将过长的行拆分为多行
 8 | 参数名'G'不符合命名规范 | ParameterName | Lab1.java:111 | 将参数名G改为小写g

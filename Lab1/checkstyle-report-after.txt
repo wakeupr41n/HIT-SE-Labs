@@ -1,4 +1,0 @@
-开始检查……
-[WARN] /Users/liqiulin/01_Projects/软件工程26春/Lab1/src/Lab1.java:14:1: 导入语句'java.net.URL' 字典顺序错误。应在'java.net.URLEncoder'之前。 [CustomImportOrder]
-[WARN] /Users/liqiulin/01_Projects/软件工程26春/Lab1/src/Lab1.java:308:5: 变量'previous'声明及第一次使用距离4行（最多：3 行）。若需要存储该变量的值，请将其声明为final的（方法调用前声明以避免副作用影响原值）。 [VariableDeclarationUsageDistance]
-检查完成。

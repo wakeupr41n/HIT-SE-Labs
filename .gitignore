@@ -1,0 +1,29 @@
+# Compiled class files
+*.class
+bin/
+
+# Package files
+*.jar
+*.zip
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# JaCoCo execution data
+coverage/jacoco.exec
+
+# Tools directory (large binaries)
+tools/
+
+# Temp files
+*~
+~$*
