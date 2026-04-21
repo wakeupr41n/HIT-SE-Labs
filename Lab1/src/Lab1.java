@@ -35,6 +35,24 @@ public class Lab1 {
   private static final Random RANDOM = new Random();
 
   /**
+   * Set the graph instance for testing purposes.
+   *
+   * @param g the graph to use
+   */
+  public static void setGraph(Graph g) {
+    graph = g;
+  }
+
+  /**
+   * Get the graph instance.
+   *
+   * @return the current graph
+   */
+  public static Graph getGraph() {
+    return graph;
+  }
+
+  /**
    * Main entry point.
    *
    * @param args command line arguments, first arg is file path
