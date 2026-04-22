@@ -1,0 +1,69 @@
+@startuml ArchitectureDiagram
+
+skinparam componentStyle rectangle
+
+package "表现层 (Presentation)" {
+  [React SPA] as React
+  [Ant Design 组件] as AntD
+  [Recharts 图表] as Charts
+  [Framer Motion 动画] as Motion
+}
+
+package "应用层 (Application)" {
+  package "Routers (接口层)" {
+    [Users Router] as UR
+    [Health Router] as HR
+    [AI Router] as AIR
+    [Reminders Router] as RemR
+    [Reports Router] as RepR
+  }
+
+  package "Services (业务层)" {
+    [AI Service] as AIS
+    [Reminder Service] as RemS
+    [Report Service] as RepS
+    [PDF Service] as PdfS
+  }
+
+  package "Auth (认证)" {
+    [JWT Token] as JWT
+    [bcrypt 加密] as BCrypt
+  }
+}
+
+package "数据层 (Data)" {
+  database "PostgreSQL" as PG
+  database "SQLite (开发)" as Lite
+  cloud "SiliconFlow LLM API" as LLM
+}
+
+React --> UR : /api/users
+React --> HR : /api/health
+React --> AIR : /api/ai
+React --> RemR : /api/reminders
+React --> RepR : /api/reports
+
+UR --> JWT
+HR --> RemS : 自动触发提醒
+AIR --> AIS
+RemR --> RemS
+RepR --> RepS
+RepR --> PdfS
+
+AIS --> LLM
+RepS --> LLM
+RepS --> PG
+
+UR --> PG
+HR --> PG
+RemR --> PG
+RepR --> PG
+
+note right of React
+  **Docker 部署架构**
+  Nginx 反向代理
+  /api → backend:8000
+  / → frontend:80
+end note
+
+@enduml

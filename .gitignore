@@ -27,3 +27,23 @@ tools/
 # Temp files
 *~
 ~$*
+
+# Python / Node (Lab2)
+__pycache__/
+*.pyc
+*.pyo
+*.db
+*.sqlite3
+.pytest_cache/
+htmlcov/
+.coverage
+*.egg-info/
+.venv/
+venv/
+node_modules/
+dist/
+.env
+
+# Build artifacts (large PDFs)
+2023111320-*-Lab3-*.pdf
+2023111320-*-Lab3-*.zip

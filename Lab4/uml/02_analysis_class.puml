@@ -1,0 +1,89 @@
+@startuml AnalysisClassDiagram
+
+skinparam class {
+  BackgroundColor<<boundary>> #E3F2FD
+  BorderColor<<boundary>> #1565C0
+  BackgroundColor<<control>> #FFF3E0
+  BorderColor<<control>> #E65100
+  BackgroundColor<<entity>> #E8F5E9
+  BorderColor<<entity>> #2E7D32
+}
+
+skinparam rectangle {
+  BackgroundColor #FAFAFA
+  BorderColor #9E9E9E
+}
+
+rectangle "边界类" {
+  class LoginView <<boundary>> {
+  }
+  class DashboardView <<boundary>> {
+  }
+  class DataEntryView <<boundary>> {
+  }
+  class AIChatView <<boundary>> {
+  }
+  class ProfileView <<boundary>> {
+  }
+  class ReminderNotificationView <<boundary>> {
+  }
+  class ReportExportView <<boundary>> {
+  }
+}
+
+rectangle "控制类" {
+  class AuthController <<control>> {
+  }
+  class DashboardController <<control>> {
+  }
+  class HealthDataController <<control>> {
+  }
+  class AIConsultController <<control>> {
+  }
+  class ReminderController <<control>> {
+  }
+  class ReportController <<control>> {
+  }
+}
+
+rectangle "实体类" {
+  class User <<entity>> {
+  }
+  class HealthRecord <<entity>> {
+  }
+  class AIConversation <<entity>> {
+  }
+  class Reminder <<entity>> {
+  }
+}
+
+LoginView --> AuthController
+AuthController --> User
+
+DashboardView --> DashboardController
+DashboardController --> User
+DashboardController --> HealthRecord
+
+DataEntryView --> HealthDataController
+HealthDataController --> User
+HealthDataController --> HealthRecord
+HealthDataController --> ReminderController
+
+AIChatView --> AIConsultController
+AIConsultController --> User
+AIConsultController --> AIConversation
+AIConsultController --> HealthRecord
+
+ProfileView --> AuthController
+
+ReminderNotificationView --> ReminderController
+ReminderController --> User
+ReminderController --> Reminder
+ReminderController --> HealthRecord
+
+ReportExportView --> ReportController
+ReportController --> User
+ReportController --> HealthRecord
+ReportController --> AIConversation
+
+@enduml

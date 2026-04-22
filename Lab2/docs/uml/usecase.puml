@@ -1,0 +1,34 @@
+@startuml UseCaseDiagram
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+actor "办公员工" as Employee
+actor "系统管理员" as Admin
+
+rectangle "Aura Health 办公室健康监测系统" {
+  usecase "注册/登录" as UC1
+  usecase "录入健康数据" as UC2
+  usecase "查看健康仪表盘" as UC3
+  usecase "AI 健康咨询" as UC4
+  usecase "接收智能提醒" as UC5
+  usecase "生成AI周报/月报" as UC6
+  usecase "导出PDF健康报告" as UC7
+  usecase "管理个人资料" as UC8
+}
+
+Employee --> UC1
+Employee --> UC2
+Employee --> UC3
+Employee --> UC4
+Employee --> UC5
+Employee --> UC6
+Employee --> UC7
+Employee --> UC8
+
+Admin --> UC1
+Admin --> UC3
+
+UC2 ..> UC5 : <<include>>
+UC6 ..> UC7 : <<extend>>
+@enduml

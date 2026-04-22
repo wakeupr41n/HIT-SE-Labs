@@ -1,0 +1,69 @@
+@startuml DomainClassDiagram
+
+class User {
+  - id: int
+  - username: str
+  - password_hash: str
+  - name: str
+  - age: int
+  - gender: str
+  - height: float
+  - weight: float
+  - occupation: str
+  - created_at: datetime
+  + get_bmi(): float
+}
+
+class HealthRecord {
+  - id: int
+  - user_id: int
+  - record_date: datetime
+  - heart_rate: int
+  - systolic_bp: int
+  - diastolic_bp: int
+  - weight: float
+  - sleep_hours: float
+  - water_intake: int
+  - steps: int
+  - created_at: datetime
+  + is_heart_rate_normal(): bool
+  + is_blood_pressure_normal(): bool
+  + is_activity_sufficient(): bool
+}
+
+class AIConversation {
+  - id: int
+  - user_id: int
+  - role: str
+  - content: str
+  - created_at: datetime
+}
+
+class Reminder {
+  - id: int
+  - user_id: int
+  - type: str
+  - message: str
+  - triggered_at: datetime
+  - is_read: bool
+  + mark_as_read(): void
+}
+
+class HealthReport {
+  - id: int
+  - user_id: int
+  - report_type: str
+  - title: str
+  - content: str
+  - start_date: datetime
+  - end_date: datetime
+  - created_at: datetime
+  + export_pdf(): bytes
+}
+
+User "1" -- "0..*" HealthRecord : owns >
+User "1" -- "0..*" AIConversation : has >
+User "1" -- "0..*" Reminder : receives >
+User "1" -- "0..*" HealthReport : generates >
+
+@enduml

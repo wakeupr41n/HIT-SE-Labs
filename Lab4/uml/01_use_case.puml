@@ -1,0 +1,47 @@
+@startuml UseCaseDiagram
+
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+
+actor "普通用户" as User
+actor "AI大模型服务" as AIService
+actor "系统时钟" as Clock
+
+rectangle "Aura Health 办公室健康监测系统" {
+  usecase "用户注册" as UC1
+  usecase "用户登录" as UC2
+  usecase "健康数据录入" as UC3
+  usecase "查看健康仪表盘" as UC4
+  usecase "查看历史趋势" as UC5
+  usecase "AI健康咨询" as UC6
+  usecase "管理个人信息" as UC7
+  usecase "接收智能提醒" as UC8
+  usecase "久坐提醒" as UC8a
+  usecase "饮水提醒" as UC8b
+  usecase "异常预警" as UC8c
+  usecase "导出健康报告" as UC9
+}
+
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC6
+User --> UC7
+User --> UC8
+User --> UC9
+
+UC1 .> UC2 : <<extend>>
+UC4 .> UC5 : <<include>>
+UC8 .> UC8a : <<include>>
+UC8 .> UC8b : <<include>>
+UC8 .> UC8c : <<include>>
+
+AIService --> UC6
+Clock --> UC8
+
+@enduml

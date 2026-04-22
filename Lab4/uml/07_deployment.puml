@@ -1,0 +1,30 @@
+@startuml DeploymentDiagram
+
+skinparam node {
+  BackgroundColor #F5F5F5
+  BorderColor #616161
+}
+
+skinparam artifact {
+  BackgroundColor #E3F2FD
+  BorderColor #1565C0
+}
+
+node "客户端节点\n(PC/手机浏览器)" as Client {
+  artifact "React SPA\n(LoginView, DashboardView,\nDataEntryView, AIChatView)" as Frontend
+}
+
+node "应用服务器节点\n(云服务器/Docker)" as Server {
+  artifact "FastAPI 后端服务\n(AuthController, HealthDataController,\nAIConsultController, ReminderController,\nDashboardController, ReportController)" as Backend
+  artifact "SQLite/PostgreSQL\n数据库" as DB
+}
+
+node "外部AI服务节点\n(SiliconFlow云)" as AIService {
+  artifact "大模型推理API\n(Qwen/DeepSeek)" as LLM
+}
+
+Client "HTTPS" --> Server : REST API 请求
+Server "HTTPS" --> AIService : API 调用
+Backend --> DB : 数据读写
+
+@enduml

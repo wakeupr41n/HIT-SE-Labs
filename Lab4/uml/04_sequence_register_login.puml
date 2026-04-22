@@ -1,0 +1,32 @@
+@startuml Sequence_RegisterLogin
+
+actor 用户
+participant "LoginView\n(登录界面)" as LV <<boundary>>
+participant "AuthController\n(用户认证控制器)" as AC <<control>>
+participant "User\n(用户)" as U <<entity>>
+
+== 用户注册 ==
+
+用户 -> LV : 输入注册信息(用户名、密码、姓名等)
+LV -> AC : 提交注册数据
+AC -> U : 查询用户名是否存在
+U --> AC : 用户名可用
+AC -> AC : 哈希加密密码
+AC -> U : 保存用户信息
+U --> AC : 返回用户对象
+AC --> LV : 注册成功
+LV --> 用户 : 显示注册成功提示，引导登录
+
+== 用户登录 ==
+
+用户 -> LV : 输入用户名和密码
+LV -> AC : 提交登录数据
+AC -> U : 根据用户名查询用户
+U --> AC : 返回用户信息
+AC -> AC : 验证密码(哈希比对)
+AC -> AC : 生成JWT令牌
+AC --> LV : 返回JWT令牌
+LV --> LV : 本地存储令牌
+LV --> 用户 : 跳转至仪表盘主页
+
+@enduml

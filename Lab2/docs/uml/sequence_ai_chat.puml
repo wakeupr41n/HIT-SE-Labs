@@ -1,0 +1,40 @@
+@startuml SequenceAIChat
+
+actor 用户
+participant "AIChatBoundary" as AIB
+participant "AIChatControl" as AIC
+participant "AIConversation (Entity)" as ACE
+participant "AIService (External)" as AIS
+database "Database" as DB
+
+用户 -> AIB: 发送消息 "我最近睡眠不好"
+AIB -> AIC: send_chat_message(message)
+
+AIC -> ACE: 保存用户消息
+ACE -> DB: INSERT INTO ai_conversations
+
+AIC -> DB: 查询最近7天健康记录
+DB --> AIC: HealthRecord 列表
+
+AIC -> DB: 查询最近8条对话历史
+DB --> AIC: Conversation 列表
+
+AIC -> AIC: build_health_context(user, records)
+AIC -> AIC: build_messages(system_prompt, history, message)
+
+AIC -> AIS: POST /chat/completions
+
+alt API 调用成功
+  AIS --> AIC: AI 生成的回复
+else API 不可用
+  AIS --> AIC: 网络错误
+  AIC -> AIC: _fallback_response(规则引擎)
+end
+
+AIC -> ACE: 保存助手回复
+ACE -> DB: INSERT INTO ai_conversations
+
+AIC --> AIB: 返回回复内容
+AIB --> 用户: 显示 AI 回复
+
+@enduml

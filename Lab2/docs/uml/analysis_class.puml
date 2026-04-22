@@ -1,0 +1,102 @@
+@startuml AnalysisClassDiagram
+
+package "Boundary Classes (界面层)" {
+  class LoginBoundary {
+    + display_login_form()
+    + display_register_form()
+    + submit_credentials()
+  }
+  class DashboardBoundary {
+    + display_vitals()
+    + display_activity()
+    + display_trend_charts()
+  }
+  class DataEntryBoundary {
+    + display_health_form()
+    + submit_health_data()
+  }
+  class AIChatBoundary {
+    + display_chat_interface()
+    + send_message()
+    + display_reply()
+  }
+  class ReminderBoundary {
+    + display_reminder_list()
+    + display_notification_badge()
+    + mark_reminder_read()
+  }
+  class ReportBoundary {
+    + display_report_list()
+    + display_report_detail()
+    + generate_report_dialog()
+    + download_pdf()
+  }
+}
+
+package "Control Classes (控制层)" {
+  class AuthControl {
+    + register_user()
+    + login_user()
+    + validate_token()
+    + get_current_user()
+  }
+  class HealthDataControl {
+    + create_record()
+    + get_records()
+    + get_latest_record()
+    + delete_record()
+  }
+  class AIChatControl {
+    + send_chat_message()
+    + get_chat_history()
+    + build_health_context()
+  }
+  class ReminderControl {
+    + check_sedentary()
+    + check_hydration()
+    + check_abnormal()
+    + run_all_checks()
+    + mark_read()
+    + mark_all_read()
+  }
+  class ReportControl {
+    + generate_weekly_report()
+    + generate_monthly_report()
+    + get_reports()
+    + delete_report()
+  }
+  class PDFExportControl {
+    + generate_pdf()
+    + download_pdf()
+  }
+}
+
+package "Entity Classes (实体层)" {
+  class User
+  class HealthRecord
+  class AIConversation
+  class Reminder
+  class HealthReport
+}
+
+LoginBoundary --> AuthControl
+DashboardBoundary --> HealthDataControl
+DataEntryBoundary --> HealthDataControl
+AIChatBoundary --> AIChatControl
+ReminderBoundary --> ReminderControl
+ReportBoundary --> ReportControl
+ReportBoundary --> PDFExportControl
+
+AuthControl --> User
+HealthDataControl --> HealthRecord
+AIChatControl --> AIConversation
+ReminderControl --> Reminder
+HealthDataControl ..> ReminderControl : <<trigger>>
+ReportControl --> HealthReport
+PDFExportControl --> HealthReport
+
+HealthDataControl --> User
+AIChatControl --> HealthRecord
+ReportControl --> HealthRecord
+
+@enduml

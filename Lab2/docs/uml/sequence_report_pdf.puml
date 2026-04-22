@@ -1,0 +1,44 @@
+@startuml SequenceReportPDF
+
+actor 用户
+participant "ReportBoundary" as RB
+participant "ReportControl" as RC
+participant "HealthRecord (Entity)" as HRE
+participant "AIService (External)" as AIS
+participant "HealthReport (Entity)" as HRP
+participant "PDFExportControl" as PEC
+database "Database" as DB
+
+用户 -> RB: 点击"生成新报告"(周报)
+RB -> RC: generate_report(report_type="weekly")
+
+RC -> DB: 查询近7天健康记录
+DB --> RC: HealthRecord 列表
+
+alt 无健康数据
+  RC --> RB: HTTPException 400 "该时段内无健康数据"
+  RB --> 用户: 显示错误提示
+else 有健康数据
+  RC -> RC: compute_stats(records)
+
+  RC -> AIS: POST /chat/completions (报告专用 Prompt)
+
+  alt AI 可用
+    AIS --> RC: 结构化中文健康报告
+  else AI 不可用
+    RC -> RC: _fallback_report(规则引擎模板)
+  end
+
+  RC -> HRP: 创建 HealthReport 对象
+  HRP -> DB: INSERT INTO health_reports
+  RC --> RB: 返回报告数据
+  RB --> 用户: 显示报告详情
+
+  用户 -> RB: 点击"下载 PDF"
+  RB -> PEC: generate_pdf(report, user, records)
+  PEC -> PEC: 使用 reportlab 生成 PDF
+  PEC --> RB: 返回 PDF 字节流
+  RB --> 用户: 浏览器下载 PDF 文件
+end
+
+@enduml

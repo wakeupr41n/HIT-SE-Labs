@@ -1,0 +1,40 @@
+@startuml Sequence_AIChat
+
+actor 用户
+participant "AIChatView\n(AI对话界面)" as AIV <<boundary>>
+participant "AIConsultController\n(AI咨询控制器)" as AIC <<control>>
+participant "AIConversation\n(AI对话)" as AICo <<entity>>
+participant "HealthRecord\n(健康记录)" as HR <<entity>>
+participant "AI大模型服务" as AI <<external>>
+
+用户 -> AIV : 输入健康问题
+AIV -> AIC : 发送消息
+AIC -> AICo : 保存用户消息
+AICo --> AIC : 消息已保存
+
+AIC -> HR : 获取最近7天健康记录
+HR --> AIC : 返回健康记录列表
+
+AIC -> AICo : 获取最近10条对话历史
+AICo --> AIC : 返回对话历史
+
+AIC -> AIC : 构建提示词(用户信息+健康数据+对话历史)
+
+alt AI大模型可用
+    AIC -> AI : 调用大模型API(HTTPS请求)
+    AI --> AIC : 返回AI健康建议
+    AIC -> AICo : 保存AI回复
+    AICo --> AIC : 回复已保存
+    AIC --> AIV : 返回AI回复
+    AIV --> 用户 : 展示AI回复
+
+else AI大模型不可用或超时
+    AIC -> AIC : 切换至本地规则引擎
+    AIC -> AIC : 基于关键词匹配生成兜底回复
+    AIC -> AICo : 保存兜底回复
+    AICo --> AIC : 回复已保存
+    AIC --> AIV : 返回兜底回复(含异常提示)
+    AIV --> 用户 : 展示兜底回复
+end
+
+@enduml
